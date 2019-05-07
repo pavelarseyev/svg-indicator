@@ -1,0 +1,91 @@
+.indicator-holder{
+  //max-width: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  @include media(">=tablet"){
+    margin: 0 -20px;
+  }
+
+  @include media(">=desktop"){
+    justify-content: flex-start;
+    margin: 0 -25px;
+  }
+}
+
+.sensor{
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+
+  @include media(">=tablet"){
+    width: calc(50% - 40px);
+    margin: 0 20px 30px;
+  }
+
+  @include media(">=desktop"){
+    width: calc(25% - 50px);
+    margin: 0 25px 40px;
+  }
+
+  &::before{
+    content: '';
+    display: block;
+    padding-top: 100%;
+    height: 0;
+    pointer-events: none;
+  }
+
+  svg{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dot{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 95%;
+    transform: translate(-50%, -50%) rotate(-135deg);
+    transition: all 1s;
+
+    &::before{
+      content: "";
+      display: block;
+      padding-top: 100%;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .indicator{
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 6px solid $white;
+      background-color: rgba(136, 102, 223, 1);
+      box-shadow: 0 0 4px rgba(0,0,0, .3);
+      transition: all 1s;
+
+      &::before{
+        content: '';
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 20px;
+        background-color: $black;
+      }
+    }
+  }
+}
