@@ -47,6 +47,24 @@
     pointer-events: none;
   }
 
+  .sensor-text{
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    text-align: center;
+  }
+
+  input{
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+  }
+
   .dot{
     position: absolute;
     top: 50%;
