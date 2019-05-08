@@ -9579,29 +9579,34 @@ var fwa = function fwa() {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = sensorsInit;
 function sensorsInit() {
-    setTimeout(function () {
-        var sensor = document.querySelectorAll('.sensor');
-        sensor.forEach(function (item) {
-            var dot = item.querySelector('.dot');
-            var indicator = dot.querySelector('.indicator');
-            var value = parseInt(dot.getAttribute('data-value'));
-            var min = -135;
-            var max = 135;
-            var full = 270;
-            var percent = (value / full * 100).toFixed(2); //10.54%
-            var degrees = 0;
+    var sensor = document.querySelectorAll('.sensor');
 
-            var minColor = [136, 99, 220];
-            var maxColor = [195, 100, 160];
+    sensor.forEach(function (item) {
+        var dot = item.querySelector('.dot');
+        var indicator = dot.querySelector('.indicator');
+        var value = parseInt(dot.getAttribute('data-value'));
+        var control = item.querySelector('input');
 
-            var redRange = maxColor[0] - minColor[0];
-            var greenRange = maxColor[1] - minColor[1];
-            var blueRange = maxColor[2] - minColor[2];
+        var min = -135;
+        var max = 135;
+        var full = 270;
+        var percent = value / full * 100;
+        var degrees = 0;
 
-            var red = 0;
-            var green = 0;
-            var blue = 0;
+        var minColor = [136, 99, 220];
+        var maxColor = [195, 100, 160];
 
+        var redRange = maxColor[0] - minColor[0];
+        var greenRange = maxColor[1] - minColor[1];
+        var blueRange = maxColor[2] - minColor[2];
+
+        var red = 0;
+        var green = 0;
+        var blue = 0;
+
+        control.value = value;
+
+        function calcIndicator() {
             if (percent <= 0) {
                 degrees = min;
                 red = minColor[0];
@@ -9616,25 +9621,26 @@ function sensorsInit() {
                 blue = maxColor[2];
             }
 
-            if (percent > 0 && percent <= 50) {
+            if (percent > 0 && percent < 100) {
                 degrees = min + full / 100 * percent;
                 red = minColor[0] + redRange / 100 * percent;
                 green = minColor[1] + greenRange / 100 * percent;
                 blue = minColor[2] + blueRange / 100 * percent;
             }
 
-            if (percent > 50 && percent < 100) {
-                degrees = max - full / 100 * percent;
-                red = maxColor[0] - redRange / 100 * percent;
-                green = maxColor[1] - greenRange / 100 * percent;
-                blue = maxColor[2] - blueRange / 100 * percent;
-            }
-
             dot.style.transform = 'translate(-50%, -50%) rotate(' + degrees + 'deg)';
-
             indicator.style.backgroundColor = 'rgba(' + red + ', ' + green + ', ' + blue + ', 1)';
+        }
+
+        calcIndicator();
+
+        control.addEventListener('input', function () {
+
+            percent = this.value / full * 100;
+
+            calcIndicator();
         });
-    }, 1000);
+    });
 }
 
 /***/ })
