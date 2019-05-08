@@ -6,6 +6,7 @@ export function sensorsInit() {
         let indicator = dot.querySelector('.indicator');
         let value = parseInt(dot.getAttribute('data-value'));
         let control = item.querySelector('input');
+        let valueHolder = item.querySelector(".value-holder span");
 
         let min = -135;
         let max = 135;
@@ -55,10 +56,15 @@ export function sensorsInit() {
         calcIndicator();
 
         control.addEventListener('input', function(){
+            let number = this.value;
 
-            percent =  (this.value / full * 100);
+            percent =  (number / full * 100);
 
             calcIndicator();
+
+            //console.log(number);
+
+            valueHolder.innerText = number;
         });
 
     });

@@ -9586,6 +9586,7 @@ function sensorsInit() {
         var indicator = dot.querySelector('.indicator');
         var value = parseInt(dot.getAttribute('data-value'));
         var control = item.querySelector('input');
+        var valueHolder = item.querySelector(".value-holder span");
 
         var min = -135;
         var max = 135;
@@ -9635,10 +9636,15 @@ function sensorsInit() {
         calcIndicator();
 
         control.addEventListener('input', function () {
+            var number = this.value;
 
-            percent = this.value / full * 100;
+            percent = number / full * 100;
 
             calcIndicator();
+
+            //console.log(number);
+
+            valueHolder.innerText = number;
         });
     });
 }
