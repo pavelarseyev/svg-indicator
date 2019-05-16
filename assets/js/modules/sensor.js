@@ -1,17 +1,98 @@
 export function sensorsInit() {
-    const sensor = document.querySelectorAll('.sensor');
+    const sensor = document.querySelectorAll(".sensor");
+
+    //проверяем все ли правильно
+    function checkValidity(value, input){
+        if(!input){
+            console.log("Нет управляющего элемента");
+            return false;
+        }
+
+        if(value.current < value.min || value.current > value.max){
+            if(value.current < value.min){
+                console.log("слишком низкое значение");
+                return false;
+            }
+
+            if(value.current > value.max){
+                console.log("слишком высокое значение");
+                return false;
+            }
+        } else {
+            console.log("допустимое значение");
+            return true;
+        }
+    }
+
+    //устанавливаем ограничения для инпута
+    function initRange(input, value) {
+        input.setAttribute("min", value.min);
+        input.setAttribute("max", value.max);
+        console.log("установил параметры инпута");
+    }
+
+    function animateInput(){
+
+    }
+
+    //стартовая анимация
+    function successAnimation(input, dot, value, holder, time){
+        input.value = value.min;
+        holder.innerHTML = value.min;
+        let degrees = -135;
+        dot.style.transform = 'translate(-50%, -50%) rotate(' + degrees + 'deg)';
+
+        let rotateControlPoint = -135 + (270 / 100) * value.percent();
+        let inputControlPoint = value.current;
+        let inputTiming = time / (Math.abs(value.min) + value.current);
+        let rotateTiming = time / (rotateControlPoint - 135);
+
+        let interval1 = setInterval(function () {
+
+            if (+(input.value) >= inputControlPoint) {
+                clearInterval(interval1);
+            } else {
+                input.value = +(input.value) + 1;
+                holder.innerHTML = input.value;
+            }
+
+        }, inputTiming);
+
+        let interval2 = setInterval(function () {
+
+            if (degrees >= rotateControlPoint) {
+                clearInterval(interval2);
+            } else {
+                degrees = degrees + 1;
+                dot.style.transform = 'translate(-50%, -50%) rotate(' + degrees + 'deg)';
+            }
+        }, rotateTiming);
+    }
+
+    function errorAnimation(){
+
+    }
 
     sensor.forEach((item) => {
-        let dot = item.querySelector('.dot');
-        let indicator = dot.querySelector('.indicator');
-        let value = parseInt(dot.getAttribute('data-value'));
-        let control = item.querySelector('input');
-        let valueHolder = item.querySelector(".value-holder span");
+        let some = item;
+        let dot = some.querySelector(".dot");
+        let indicator = dot.querySelector(".indicator");
+        let input = some.querySelector("input");
+        let valueHolder = some.querySelector(".value-holder span");
+        let time = 500;
 
-        let min = -135;
-        let max = 135;
-        let full = 270;
-        let percent = (value / full * 100);
+        let value = {
+            min: parseInt(dot.getAttribute("data-min")),
+            max: parseInt(dot.getAttribute("data-max")),
+            current: parseInt(dot.getAttribute("data-value")),
+            fullRange: function(){return Math.abs(this.min) + Math.abs(this.max)},
+            percent: function(){return ((Math.abs(value.min) + value.current) / value.fullRange()) * 100;}
+        };
+
+        let minRotate = -135;
+        let maxRotate = 135;
+        let fullRotate = 270;
+
         let degrees = 0;
 
         let minColor = [136, 99, 220];
@@ -25,46 +106,34 @@ export function sensorsInit() {
         let green = 0;
         let blue = 0;
 
-        control.value = value;
+        if(!checkValidity(value, input)){
+            errorAnimation();
+            return false;
+        } else {
+            initRange(input, value);
+            successAnimation(input, dot, value, valueHolder, time)
+        }
 
-        function calcIndicator(){
-            if (percent <= 0) {
-                degrees = min;
-                red = minColor[0];
-                green = minColor[1];
-                blue = minColor[2];
-            }
+        valueHolder.innerHTML = value.current;
 
-            if (percent >= 100) {
-                degrees = max;
-                red = maxColor[0];
-                green = maxColor[1];
-                blue = maxColor[2];
-            }
-
-            if (percent > 0 && percent < 100) {
-                degrees = min + ((full / 100) * percent);
-                red = minColor[0] + ((redRange / 100) * percent);
-                green = minColor[1] + ((greenRange / 100) * percent);
-                blue = minColor[2] + ((blueRange / 100) * percent);
-            }
+        function calcIndicator(percent) {
+            degrees = minRotate + ((fullRotate / 100) * percent);
+            red = minColor[0] + ((redRange / 100) * percent);
+            green = minColor[1] + ((greenRange / 100) * percent);
+            blue = minColor[2] + ((blueRange / 100) * percent);
 
             dot.style.transform = 'translate(-50%, -50%) rotate(' + degrees + 'deg)';
             indicator.style.backgroundColor = `rgba(${red}, ${green}, ${blue}, 1)`;
         }
 
-        calcIndicator();
+        // calcIndicator(value.percent());
 
-        control.addEventListener('input', function(){
-            let number = this.value;
+        input.addEventListener('input', function () {
+            let percent = ((Math.abs(value.min) + parseInt(this.value)) / value.fullRange()) * 100;
 
-            percent =  (number / full * 100);
+            calcIndicator(percent);
 
-            calcIndicator();
-
-            //console.log(number);
-
-            valueHolder.innerText = number;
+            valueHolder.innerText = this.value;
         });
 
     });

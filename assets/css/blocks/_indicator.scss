@@ -71,7 +71,6 @@
     left: 50%;
     width: 95%;
     transform: translate(-50%, -50%) rotate(-135deg);
-    //transition: all 1s;
     pointer-events: none;
 
     &::before{
@@ -91,10 +90,8 @@
       height: 20px;
       border-radius: 50%;
       border: 6px solid $white;
-      //background-color: rgba(136, 102, 223, 1);
       background-color: transparent;
       box-shadow: 0 0 4px rgba(0,0,0, .3);
-      //transition: all 1s;
 
       &::before{
         content: '';
